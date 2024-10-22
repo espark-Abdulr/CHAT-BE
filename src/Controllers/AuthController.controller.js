@@ -32,7 +32,11 @@ export const RegisterHandler = asyncHandler(async (req, res) => {
         _id: user._id,
         email: user.email,
         createdAt: user?.createdAt,
-        profileSetup: user?.profileSetup
+        profileSetup: user?.profileSetup,
+        firstName: user?.firstName,
+        lastName: user?.lastName,
+        image: user?.image,
+        color: user?.color,
     };
     const responseData = { user: userResponse };
     return res.status(200).json(new ApiResponse(200, responseData, "User registered successfully"));
@@ -61,9 +65,35 @@ export const LoginHandler = asyncHandler(async (req, res) => {
         _id: findUser._id,
         email: findUser.email,
         createdAt: findUser?.createdAt,
-        profileSetup: findUser?.profileSetup
+        profileSetup: findUser?.profileSetup,
+        firstName: findUser?.firstName,
+        lastName: findUser?.lastName,
+        image: findUser?.image,
+        color: findUser?.color,
     };
-    return res.status(200).json(new ApiResponse(200, { userResponse, token }, "User registered successfully"));
+    return res.status(200).json(new ApiResponse(200, { userResponse, token }, "User login successfully"));
 
+
+})
+
+
+export const VerifyUser = asyncHandler(async (req, res) => {
+    const userId = req?.userId;
+    if (!userId) {
+        return res.status(500).json({ message: "Something went wrong" });
+    }
+    const user = await UserModel.findById(userId);
+    if (!user) {
+        return res.status(404).json({ message: "User with this id not found" });
+    }
+    const userResponse = {
+        email: user?.email,
+        profileSetup: user?.profileSetup,
+        firstName: user?.firstName,
+        lastName: user?.lastName,
+        image: user?.image,
+        color: user?.color,
+    }
+    return res.status(200).json(new ApiResponse(200, { userResponse }, "Token checking"));
 
 })
