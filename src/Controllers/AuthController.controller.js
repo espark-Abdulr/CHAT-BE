@@ -97,3 +97,36 @@ export const VerifyUser = asyncHandler(async (req, res) => {
     return res.status(200).json(new ApiResponse(200, { userResponse }, "Token checking"));
 
 })
+
+export const UpdateProfile = asyncHandler(async (req, res) => {
+    const userId = req?.userId;
+    if (!userId) {
+        return res.status(500).json({ message: "Something went wrong" });
+    }
+    const user = await UserModel.findById(userId);
+    if (!user) {
+        return res.status(404).json({ message: "User with this id not found" });
+    }
+    const { firstName, lastName, color } = req.body;
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        const firstError = errors.array()[0];
+        return res.status(400).json({ message: firstError.msg });
+    }
+    // if (!image) {
+    //     return res.status(400).json({ message: "Profile image is required" });
+    // }
+
+    const userData = await UserModel.findByIdAndUpdate(userId, { firstName, lastName, color, profileSetup: true }, { new: true, runValidators: true })
+
+    const userResponse = {
+        email: userData?.email,
+        profileSetup: userData?.profileSetup,
+        firstName: userData?.firstName,
+        lastName: userData?.lastName,
+        image: userData?.image,
+        color: userData?.color,
+    }
+    return res.status(200).json(new ApiResponse(200, { userResponse }, "Profile Updated Successfully"));
+
+})
