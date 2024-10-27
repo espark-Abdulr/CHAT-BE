@@ -17,7 +17,7 @@ export const validateProfile = [
         .withMessage('Please provide your first name')
         .isAlpha()
         .withMessage("Name can't contain numbers or special characters")
-        .isLength({ min: 3 }) // Minimum length of 3 characters
+        .isLength({ min: 3 })
         .withMessage('First name must be at least 3 characters long'),
     body('lastName')
         .notEmpty()
@@ -32,5 +32,5 @@ export const validateProfile = [
         .isInt()
         .withMessage("Color must contain a numeric value")
         .isInt({ min: 0, max: 3 })
-        .withMessage('Values must be between range 0 and 3'),
+        .withMessage('Color value must be between range 0 and 3'),
 ];

@@ -21,9 +21,18 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: false
     },
-    image: {
-        type: String,
-        required: false
+    profileImg: {
+        type: {
+            public_id: {
+                type: String,
+                required: [true, "Profile image public_id is required"]
+            },
+            url: {
+                type: String,
+                required: [true, "Profile image url is required"]
+            }
+        },
+        required: [true, "Profile image is required"]
     },
     color: {
         type: Number,
@@ -39,7 +48,7 @@ const userSchema = new mongoose.Schema({
 
 
 userSchema.pre("save", async function (next) {
-    
+
     if (this.isModified("password")) {
         const salt = await genSalt();
         this.password = await hash(this.password, salt);

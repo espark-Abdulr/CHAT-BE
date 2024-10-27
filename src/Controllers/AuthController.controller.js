@@ -5,6 +5,7 @@ import { ApiResponse } from "../Utils/ApiResponse.js";
 import { validateLogin } from "../validator/validator.js";
 import { validationResult } from "express-validator";
 import { compare } from "bcrypt";
+import { uploadFilesToCloudinary } from "../Utils/cloudinary.js";
 
 const maxAge = "10d";
 const createToken = (email, userId) => {
@@ -35,7 +36,7 @@ export const RegisterHandler = asyncHandler(async (req, res) => {
         profileSetup: user?.profileSetup,
         firstName: user?.firstName,
         lastName: user?.lastName,
-        image: user?.image,
+        profileImg: user?.profileImg,
         color: user?.color,
     };
     const responseData = { user: userResponse };
@@ -68,10 +69,11 @@ export const LoginHandler = asyncHandler(async (req, res) => {
         profileSetup: findUser?.profileSetup,
         firstName: findUser?.firstName,
         lastName: findUser?.lastName,
-        image: findUser?.image,
+        profileImg: findUser?.profileImg,
         color: findUser?.color,
     };
-    return res.status(200).json(new ApiResponse(200, { userResponse, token }, "User login successfully"));
+    // return res.status(200).json(new ApiResponse(200, { userResponse, token }, "User login successfully"));
+    return res.status(200).cookie("token", token).json(new ApiResponse(200, userResponse, "Login Successfull"))
 
 
 })
@@ -91,7 +93,7 @@ export const VerifyUser = asyncHandler(async (req, res) => {
         profileSetup: user?.profileSetup,
         firstName: user?.firstName,
         lastName: user?.lastName,
-        image: user?.image,
+        profileImg: user?.profileImg,
         color: user?.color,
     }
     return res.status(200).json(new ApiResponse(200, { userResponse }, "Token checking"));
@@ -124,9 +126,36 @@ export const UpdateProfile = asyncHandler(async (req, res) => {
         profileSetup: userData?.profileSetup,
         firstName: userData?.firstName,
         lastName: userData?.lastName,
-        image: userData?.image,
+        profileImg: userData?.profileImg,
         color: userData?.color,
     }
     return res.status(200).json(new ApiResponse(200, { userResponse }, "Profile Updated Successfully"));
+
+})
+
+
+export const UpdatePictureHandler = asyncHandler(async (req, res) => {
+    const userId = req?.userId;
+    if (!userId) {
+        return res.status(500).json({ message: "Something went wrong" });
+    }
+    const user = await UserModel.findById(userId);
+    if (!user) {
+        return res.status(404).json({ message: "User with this id not found" });
+    }
+
+    const file = req.file;
+    if (!file) {
+        return res.status(400).json({ message: "Please upload an image" });
+    }
+
+    const result = await uploadFilesToCloudinary([file], "Chats/User")
+
+    return res.status(200).json(new ApiResponse(200, {}, "Profile Updated Successfully"));
+
+})
+
+
+export const RemoveImageHandler = asyncHandler(async (req, res) => {
 
 })
