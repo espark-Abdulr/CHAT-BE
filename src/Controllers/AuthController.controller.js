@@ -5,7 +5,7 @@ import { ApiResponse } from "../Utils/ApiResponse.js";
 import { validateLogin } from "../validator/validator.js";
 import { validationResult } from "express-validator";
 import { compare } from "bcrypt";
-import { uploadFilesToCloudinary } from "../Utils/cloudinary.js";
+import { deleteFilesFromCloudinary, uploadFilesToCloudinary } from "../Utils/cloudinary.js";
 
 const maxAge = "10d";
 const createToken = (email, userId) => {
@@ -72,8 +72,8 @@ export const LoginHandler = asyncHandler(async (req, res) => {
         profileImg: findUser?.profileImg,
         color: findUser?.color,
     };
-    // return res.status(200).json(new ApiResponse(200, { userResponse, token }, "User login successfully"));
-    return res.status(200).cookie("token", token).json(new ApiResponse(200, userResponse, "Login Successfull"))
+    return res.status(200).json(new ApiResponse(200, { userResponse, token }, "User login successfully"));
+    // return res.status(200).cookie("token", token).json(new ApiResponse(200, userResponse, "Login Successfull"))
 
 
 })
@@ -150,12 +150,33 @@ export const UpdatePictureHandler = asyncHandler(async (req, res) => {
     }
 
     const result = await uploadFilesToCloudinary([file], "Chats/User")
+    const updatedUser = await UserModel.findByIdAndUpdate(userId, { profileImg: result[0] }, { new: true, runValidators: true });
 
-    return res.status(200).json(new ApiResponse(200, {}, "Profile Updated Successfully"));
+    return res.status(200).json(new ApiResponse(200, { profileImg: updatedUser?.profileImg }, "Profile Image Updated Successfully"));
 
 })
 
 
 export const RemoveImageHandler = asyncHandler(async (req, res) => {
+    const userId = req?.userId;
+    if (!userId) {
+        return res.status(500).json({ message: "Something went wrong" });
+    }
+    const user = await UserModel.findById(userId);
+    if (!user) {
+        return res.status(404).json({ message: "User with this id not found" });
+    }
 
+    const { imgUrl } = req.body;
+    if (!imgUrl) {
+        return res.status(401).json({ message: "Image URL is required for deletion" });
+    }
+
+    try {
+        await deleteFilesFromCloudinary([imgUrl]);
+        const updatedUser = await UserModel.findByIdAndUpdate(userId, { profileImg: { url: null } }, { new: true, runValidators: true });
+        return res.status(200).json(new ApiResponse(200, { profileImg: updatedUser?.profileImg }, "Profile Image Deleted Successfully"));
+    } catch (err) {
+        return res.status(500).json({ message: `Error deleting image: ${err.message}` });
+    }
 })

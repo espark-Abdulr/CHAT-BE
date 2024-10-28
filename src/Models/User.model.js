@@ -25,14 +25,14 @@ const userSchema = new mongoose.Schema({
         type: {
             public_id: {
                 type: String,
-                required: [true, "Profile image public_id is required"]
+                required: false
             },
             url: {
                 type: String,
-                required: [true, "Profile image url is required"]
+                required: false
             }
         },
-        required: [true, "Profile image is required"]
+        required: false
     },
     color: {
         type: Number,

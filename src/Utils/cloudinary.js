@@ -49,3 +49,32 @@ export const uploadFilesToCloudinary = async (files = [], folderName) => {
         throw new Error(`Error uploading files: ${err.message}`);
     }
 };
+
+export const deleteFilesFromCloudinary = async (public_ids) => {
+    if (!Array.isArray(public_ids) || public_ids.length === 0) {
+        throw new Error("Missing required parameter - public_ids");
+    }
+
+    const deletePromises = public_ids.map((public_id) => {
+        return new Promise((resolve, reject) => {
+            cloudinary.uploader.destroy(public_id, (err, result) => {
+                if (err) {
+                    return reject({ public_id, error: err });
+                }
+                resolve({ public_id, result });
+            });
+        });
+    });
+
+    try {
+        const results = await Promise.allSettled(deletePromises);
+        const errors = results.filter(res => res.status === 'rejected').map(res => res.reason);
+        if (errors.length) {
+            console.error('Errors deleting files:', errors);
+            throw new Error("Some images could not be deleted");
+        }
+        return results.filter(res => res.status === 'fulfilled').map(res => res.value);
+    } catch (err) {
+        throw new Error(`Error deleting files: ${err.message}`);
+    }
+};

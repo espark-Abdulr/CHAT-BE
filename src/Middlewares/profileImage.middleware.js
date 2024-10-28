@@ -8,9 +8,7 @@ const fileFilter = (req, file, callback) => {
 
     }
     const fileSize = parseInt(req.headers["content-length"]);
-    // if (fileSize > 1048576) {
-    //     return res.status(401).json({ success: false, message: "File Size Big" });
-    // }
+    
 
     callback(null, true);
 };
