@@ -72,8 +72,8 @@ export const LoginHandler = asyncHandler(async (req, res) => {
         profileImg: findUser?.profileImg,
         color: findUser?.color,
     };
-    return res.status(200).json(new ApiResponse(200, { userResponse, token }, "User login successfully"));
-    // return res.status(200).cookie("token", token).json(new ApiResponse(200, userResponse, "Login Successfull"))
+    // return res.status(200).json(new ApiResponse(200, { userResponse, token }, "User login successfully"));
+    return res.status(200).cookie("token", token).json(new ApiResponse(200, userResponse, "Login Successfull"))
 
 
 })

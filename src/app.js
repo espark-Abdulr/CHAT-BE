@@ -33,6 +33,8 @@ app.use(bodyParser.json());
 
 
 import authRoutes from "./Routes/Auth.routes.js";
+import contactRoutes from "./Routes/ContactRoutes..routes.js";
 app.use("/api/auth", authRoutes)
+app.use("/api/contacts", contactRoutes)
 
 export { app };
