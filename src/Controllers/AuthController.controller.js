@@ -61,22 +61,30 @@ export const LoginHandler = asyncHandler(async (req, res) => {
     if (!passChecker) {
         return res.status(400).json({ message: "Invalid Email or Password" });
     }
+
     const token = createToken(findUser.email, findUser._id);
+
+    // Set the cookie
+    res.cookie("token", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'Strict',
+        maxAge: 10 * 24 * 60 * 60 * 1000
+    });
+
     const userResponse = {
         _id: findUser._id,
         email: findUser.email,
-        createdAt: findUser?.createdAt,
-        profileSetup: findUser?.profileSetup,
-        firstName: findUser?.firstName,
-        lastName: findUser?.lastName,
-        profileImg: findUser?.profileImg,
-        color: findUser?.color,
+        createdAt: findUser.createdAt,
+        profileSetup: findUser.profileSetup,
+        firstName: findUser.firstName,
+        lastName: findUser.lastName,
+        profileImg: findUser.profileImg,
+        color: findUser.color,
     };
-    // return res.status(200).json(new ApiResponse(200, { userResponse, token }, "User login successfully"));
-    return res.status(200).cookie("token", token).json(new ApiResponse(200, userResponse, "Login Successfull"))
 
-
-})
+    return res.status(200).json(new ApiResponse(200, { userResponse }, "User login successfully"));
+});
 
 
 export const VerifyUser = asyncHandler(async (req, res) => {
@@ -95,6 +103,7 @@ export const VerifyUser = asyncHandler(async (req, res) => {
         lastName: user?.lastName,
         profileImg: user?.profileImg,
         color: user?.color,
+        _id: user?._id
     }
     return res.status(200).json(new ApiResponse(200, { userResponse }, "Token checking"));
 
