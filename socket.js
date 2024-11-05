@@ -23,6 +23,7 @@ const setupSocket = (server) => {
     };
 
     const sendMessage = async (message) => {
+        console.log(message)
         const senderSocketId = userSocketMap.get(message.sender)
         const recipientSocketId = userSocketMap.get(message.recipient)
 
@@ -32,17 +33,15 @@ const setupSocket = (server) => {
         const messageData = await MessageModel.findById(createMessage?._id).populate("sender", "id firstName lastName email profileImg color").populate("recipient", "id firstName lastName email profileImg color")
 
         if (recipientSocketId) {
-            io.to(recipientSocketId).emit("receiveMessage", messageData)
+            io.to(recipientSocketId).emit("recieveMessage", messageData)
         }
         if (senderSocketId) {
-            io.to(senderSocketId).emit("receiveMessage", messageData)
+            io.to(senderSocketId).emit("recieveMessage", messageData)
         }
     };
 
     io.on("connection", (socket) => {
-        // Access userId from the query parameter
-        const userId = socket.handshake.query.userId;  // Changed from socket.handshake.userId to socket.handshake.query.userId
-        console.log(userId);
+        const userId = socket.handshake.query.userId;
         if (userId) {
             userSocketMap.set(userId, socket.id);
             console.log("User Connected", userId, "with socket id", socket.id);

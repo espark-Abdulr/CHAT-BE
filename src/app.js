@@ -34,7 +34,9 @@ app.use(bodyParser.json());
 
 import authRoutes from "./Routes/Auth.routes.js";
 import contactRoutes from "./Routes/ContactRoutes..routes.js";
+import messageRoutes from "./Routes/messages.routes.js";
 app.use("/api/auth", authRoutes)
 app.use("/api/contacts", contactRoutes)
+app.use("/api/messages", messageRoutes)
 
 export { app };
