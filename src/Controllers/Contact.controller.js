@@ -103,7 +103,23 @@ export const GetAllContactsForDmController = asyncHandler(async (req, res) => {
             $sort: { lastMessageTime: -1 }
         }
     ]);
-    
-    
+
+
+    return res.status(200).json(new ApiResponse(200, { contacts }, "Users found successfully"));
+})
+
+
+export const GetAllContacts = asyncHandler(async (req, res) => {
+    let userId = req?.userId;
+    if (!userId) {
+        return res.status(500).json({ message: "Something went wrong" });
+    }
+
+    const users = await UserModel.find({ _id: { $ne: userId } }, "firstName lastName _id")
+
+    const contacts = users.map((user) => ({
+        label: user?.firstName ? `${user?.firstName} ${user?.lastName}` : user?.email,
+        value: user?._id
+    }))
     return res.status(200).json(new ApiResponse(200, { contacts }, "Users found successfully"));
 })
