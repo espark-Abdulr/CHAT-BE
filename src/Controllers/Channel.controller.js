@@ -2,6 +2,7 @@ import { asyncHandler } from "../Utils/asyncHandler.js";
 import { ApiResponse } from "../Utils/ApiResponse.js";
 import { UserModel } from "../Models/User.model.js";
 import ChannelModel from "../Models/Channel.model.js";
+import mongoose from "mongoose";
 
 export const CreateChannelController = asyncHandler(async (req, res) => {
     const { name, members } = req.body
@@ -30,4 +31,18 @@ export const CreateChannelController = asyncHandler(async (req, res) => {
     })
 
     return res.status(200).json(new ApiResponse(200, { channel: newChannel }, "Channel created successfully"));
+})
+
+
+export const GetUserChannelsController = asyncHandler(async (req, res) => {
+
+    const userId = new mongoose.Types.ObjectId(req?.userId)
+    const channels = await ChannelModel.find({
+        $or: [
+            { admin: userId },
+            { members: userId }
+        ]
+    }).sort({ updatedAt: -1 })
+
+    return res.status(200).json(new ApiResponse(200, { channel: channels }, "Got channels successfully"));
 })
