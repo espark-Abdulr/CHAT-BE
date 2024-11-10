@@ -25,7 +25,7 @@ export const validateProfile = [
         .isAlpha()
         .withMessage("Name can't contain numbers or special characters")
         .isLength({ min: 3 })
-        .withMessage('First name must be at least 3 characters long'),
+        .withMessage('Last name must be at least 3 characters long'),
     body('color')
         .notEmpty()
         .withMessage('Please provide color')
