@@ -5,7 +5,7 @@ import ChannelModel from "./src/Models/Channel.model.js";
 const setupSocket = (server) => {
     const io = new SocketIOServer(server, {
         cors: {
-            origin: ["http://localhost:5173"],
+            origin: ["http://localhost:5173", "https://chat-hub-ashy.vercel.app"],
             methods: ["GET", "POST"],
             credentials: true
         }
@@ -72,24 +72,24 @@ const setupSocket = (server) => {
             if (adminSocketId) {
                 io.to(adminSocketId).emit("recieve-channel-message", finalData)
             }
-        
+
         }
     }
 
-io.on("connection", (socket) => {
-    const userId = socket.handshake.query.userId;
-    if (userId) {
-        userSocketMap.set(userId, socket.id);
-        console.log("User Connected", userId, "with socket id", socket.id);
-    } else {
-        console.log("User id not provided");
-    }
+    io.on("connection", (socket) => {
+        const userId = socket.handshake.query.userId;
+        if (userId) {
+            userSocketMap.set(userId, socket.id);
+            console.log("User Connected", userId, "with socket id", socket.id);
+        } else {
+            console.log("User id not provided");
+        }
 
 
-    socket.on("sendMessage", sendMessage);
-    socket.on("send-channel-message", SendChannelMessage);
-    socket.on("disconnect", () => disconnect(socket));
-});
+        socket.on("sendMessage", sendMessage);
+        socket.on("send-channel-message", SendChannelMessage);
+        socket.on("disconnect", () => disconnect(socket));
+    });
 };
 
 export default setupSocket;
