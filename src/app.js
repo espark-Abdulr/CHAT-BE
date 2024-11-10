@@ -7,6 +7,7 @@ const app = express();
 const allowedOrigins = [
   'http://localhost:5174',
   process.env.FRONT_END_URL,
+  "https://chat-hub-ashy.vercel.app"
 ];
 
 app.use(
