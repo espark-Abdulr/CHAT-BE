@@ -41,4 +41,8 @@ app.use("/api/contacts", contactRoutes)
 app.use("/api/messages", messageRoutes)
 app.use("/api/channel", channelRoutes)
 
+app.use("/", (req, res) => {
+  res.json({ message: "Hello World" });
+});
+
 export { app };
