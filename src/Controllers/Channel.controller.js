@@ -46,3 +46,21 @@ export const GetUserChannelsController = asyncHandler(async (req, res) => {
 
     return res.status(200).json(new ApiResponse(200, { channel: channels }, "Got channels successfully"));
 })
+
+
+export const ChannelMessages = asyncHandler(async (req, res) => {
+    const { channelId } = req.query;
+    // console.log(channelId)
+
+    const channel = await ChannelModel.findById(channelId).populate({
+        path: "messages", populate: {
+            path: "sender", select: "firstName lastName email _id profileImg color"
+        }
+    })
+    if (!channel) {
+        return res.status(404).json({ message: "Channel not found" });
+    }
+
+    const messages = channel.messages;
+    return res.status(200).json(new ApiResponse(200, { messages: messages }, "Got messages successfully"));
+})

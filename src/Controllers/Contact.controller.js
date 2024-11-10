@@ -115,7 +115,17 @@ export const GetAllContacts = asyncHandler(async (req, res) => {
         return res.status(500).json({ message: "Something went wrong" });
     }
 
-    const users = await UserModel.find({ _id: { $ne: userId } }, "firstName lastName _id")
+    // const users = await UserModel.find({ _id: { $ne: userId } }, "firstName lastName _id")
+    const users = await UserModel.find({
+        $and: [
+            {
+                profileSetup: true,
+            },
+            {
+                "_id": { $ne: userId }
+            }
+        ]
+    })
 
     const contacts = users.map((user) => ({
         label: user?.firstName ? `${user?.firstName} ${user?.lastName}` : user?.email,
