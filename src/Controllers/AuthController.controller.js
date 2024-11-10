@@ -67,8 +67,7 @@ export const LoginHandler = asyncHandler(async (req, res) => {
     // Set the cookie
     res.cookie("token", token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'Strict',
+        sameSite: 'Lax',
         maxAge: 10 * 24 * 60 * 60 * 1000
     });
 
@@ -194,7 +193,7 @@ export const RemoveImageHandler = asyncHandler(async (req, res) => {
 export const LogoutHandler = asyncHandler(async (req, res) => {
     res.cookie("token", "", {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
+        // secure: process.env.NODE_ENV === 'production',
         sameSite: 'Strict',
         maxAge: 0
     });
