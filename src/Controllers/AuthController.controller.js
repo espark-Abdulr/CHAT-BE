@@ -92,9 +92,9 @@ export const VerifyUser = asyncHandler(async (req, res) => {
     if (!userId) {
         return res.status(500).json({ message: "Something went wrong" });
     }
-    console.log(userId)
+    console.log("USER ID: ,userId)
     const user = await UserModel.findById(userId);
-    console.log(user)
+    console.log("USER: ,user)
     if (!user) {
         return res.status(404).json({ message: "User with this id not found" });
     }
