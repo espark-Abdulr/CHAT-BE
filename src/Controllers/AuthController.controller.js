@@ -63,6 +63,7 @@ export const LoginHandler = asyncHandler(async (req, res) => {
     }
 
     const token = createToken(findUser.email, findUser._id);
+    console.log("TOKEN: ", token);
 
     // Set the cookie
     res.cookie("token", token, {
@@ -81,6 +82,7 @@ export const LoginHandler = asyncHandler(async (req, res) => {
         lastName: findUser.lastName,
         profileImg: findUser.profileImg,
         color: findUser.color,
+        token:token
     };
 
     return res.status(200).json(new ApiResponse(200, { userResponse }, "User login successfully"));
