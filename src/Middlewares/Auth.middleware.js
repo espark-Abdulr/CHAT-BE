@@ -3,7 +3,7 @@ import { UserModel } from "../Models/User.model.js";
 
 export const verifyToken = async (req, res, next) => {
     const token = req?.cookies?.token || req.header("Authorization")?.replace("Bearer ", "");
-    console.log(token)
+    console.log("Token in Middleware",token)
     if (!token) {
         return res.status(401).json({ message: "You are not authenticated" });
     }
