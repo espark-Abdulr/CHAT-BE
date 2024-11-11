@@ -5,7 +5,9 @@ import ChannelModel from "./src/Models/Channel.model.js";
 const setupSocket = (server) => {
     const io = new SocketIOServer(server, {
         cors: {
-            origin: ["http://localhost:5173", "https://chat-hub-ashy.vercel.app"],
+            origin: ["http://localhost:5173"
+                , "https://chat-hub-ashy.vercel.app"
+            ],
             methods: ["GET", "POST"],
             credentials: true
         }
@@ -24,7 +26,7 @@ const setupSocket = (server) => {
     };
 
     const sendMessage = async (message) => {
-        console.log(message)
+        // console.log(message)
         const senderSocketId = userSocketMap.get(message.sender)
         const recipientSocketId = userSocketMap.get(message.recipient)
 
