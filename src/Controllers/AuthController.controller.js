@@ -196,7 +196,7 @@ export const RemoveImageHandler = asyncHandler(async (req, res) => {
 export const LogoutHandler = asyncHandler(async (req, res) => {
     res.cookie("token", "", {
         httpOnly: true,
-        // secure: process.env.NODE_ENV === 'production',
+        secure: process.env.NODE_ENV === 'production',
         // sameSite: 'Strict',
         sameSite: 'None',
         maxAge: 0
