@@ -4,32 +4,25 @@ import bodyParser from "body-parser"
 import cookieParser from "cookie-parser";
 
 const app = express();
-// const allowedOrigins = [
-//   'http://localhost:5174',
-//   process.env.FRONT_END_URL,
-//   "https://chat-hub-ashy.vercel.app"
-// ];
-
-// app.use(
-//   cors({
-//     origin: (origin, callback) => {
-//       // Allow requests with no origin (like mobile apps or curl)
-//       if (!origin || allowedOrigins.indexOf(origin) !== -1 || allowedOrigins.some(o => o.test && o.test(origin))) {
-//         callback(null, true);
-//       } else {
-//         callback(new Error('Not allowed by CORS'));
-//       }
-//     },
-//     credentials: true, // Allow credentials (cookies, etc.)
-//   })
-// );
+const allowedOrigins = [
+  'http://localhost:5174',
+  process.env.FRONT_END_URL,
+  "https://chat-hub-ashy.vercel.app"
+];
 
 app.use(
   cors({
-    origin: '*',  // Allow all origins
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true); // Allow this origin
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
     credentials: true, // Allow credentials (cookies, etc.)
   })
 );
+
 
 
 app.use(express.static("public"));
